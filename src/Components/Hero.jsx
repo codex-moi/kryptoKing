@@ -6,13 +6,26 @@ const Hero = () => {
   const [coins, setCoins] = useState([]);
   const [filteredCoins, setFilteredCoins] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currency, setCurrency] = useState('usd'); // State for selected currency
+  const [currencySymbol, setCurrencySymbol] = useState('$'); // State for currency symbol
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Update the currency symbol based on the selected currency
+  useEffect(() => {
+    if (currency === 'usd') setCurrencySymbol('$');
+    else if (currency === 'eur') setCurrencySymbol('€');
+    else if (currency === 'ngn') setCurrencySymbol('₦');
+  }, [currency]);
+
+  // Fetch coins whenever the currency changes
   useEffect(() => {
     const fetchCoins = async () => {
       try {
-        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+        setLoading(true);
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}`
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch coins');
         }
@@ -27,7 +40,7 @@ const Hero = () => {
     };
 
     fetchCoins();
-  }, []);
+  }, [currency]);
 
   // Update filteredCoins whenever searchTerm changes
   useEffect(() => {
@@ -55,6 +68,17 @@ const Hero = () => {
           />
           <AiOutlineSearch size={20} className="mt-2 md:mt-0 md:ml-2" />
         </div>
+        <div className="flex justify-center items-center mt-5">
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)} // Update currency on dropdown change
+            className="bg-gray-700 text-white px-4 py-2 rounded"
+          >
+            <option value="usd">USD</option>
+            <option value="eur">EUR</option>
+            <option value="ngn">NGN</option>
+          </select>
+        </div>
         <div className="flex justify-between items-center mt-10 w-full">
           <div className="flex flex-col w-[90%] md:w-[80%] lg:w-[60%] mx-auto bg-[#0f172a] rounded p-2">
             <div className="hidden md:flex justify-between font-bold">
@@ -78,7 +102,10 @@ const Hero = () => {
                   >
                     {coin.name}
                   </Link>
-                  <p className="text-sm md:text-base">${coin.current_price.toLocaleString()}</p>
+                  <p className="text-sm md:text-base">
+                    {currencySymbol}
+                    {coin.current_price.toLocaleString()}
+                  </p>
                   <p
                     className={`text-sm md:text-base ${
                       coin.price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'
@@ -86,7 +113,10 @@ const Hero = () => {
                   >
                     {coin.price_change_percentage_24h.toFixed(2)}%
                   </p>
-                  <p className="text-sm md:text-base">${coin.market_cap.toLocaleString()}</p>
+                  <p className="text-sm md:text-base">
+                    {currencySymbol}
+                    {coin.market_cap.toLocaleString()}
+                  </p>
                 </div>
               ))}
             </div>

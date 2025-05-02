@@ -36,11 +36,6 @@ const Navbar = () => {
         </ul>
         {/* Currency Selector and Sign-Up Button */}
         <div className="hidden md:flex items-center gap-2">
-          <select name="" id="" className="bg-gray-700 text-white px-2 py-1 rounded">
-            <option value="usd">USD</option>
-            <option value="eur">EUR</option>
-            <option value="ngn">NGN</option>
-          </select>
           <button className="bg-blue-500 text-white px-4 py-2 flex rounded">
             <AiOutlineLogin className="mt-1 mx-1" /> Sign Up
           </button>
